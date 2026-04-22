@@ -1,28 +1,188 @@
 services:
-  ss-zapret:
+  ss-zapret-cf:
     image: vernette/ss-zapret:v72.8
-    container_name: zapret-proxy
+    container_name: zapret-proxy-cf
     restart: unless-stopped
     environment:
-      - SS_PORT=${SS_PORT}
+      - SS_PORT=${SS_PORT_CF}
       - SS_PASSWORD=${SS_PASSWORD}
       - SS_ENCRYPT_METHOD=${SS_ENCRYPT_METHOD}
       - SS_TIMEOUT=${SS_TIMEOUT}
-      - SOCKS_PORT=${SOCKS_PORT}
+      - SOCKS_PORT=${SOCKS_PORT_CF}
       - SS_VERBOSE=1
     ports:
-      - "127.0.0.1:${SS_PORT}:${SS_PORT}/tcp"
-      - "127.0.0.1:${SS_PORT}:${SS_PORT}/udp"
-      - "127.0.0.1:${SOCKS_PORT}:${SOCKS_PORT}/tcp"
-      - "127.0.0.1:${SOCKS_PORT}:${SOCKS_PORT}/udp"
+      - "127.0.0.1:${SS_PORT_CF}:${SS_PORT_CF}/tcp"
+      - "127.0.0.1:${SS_PORT_CF}:${SS_PORT_CF}/udp"
+      - "${SOCKS_PORT_CF}:${SOCKS_PORT_CF}/tcp"
+      - "${SOCKS_PORT_CF}:${SOCKS_PORT_CF}/udp"
     volumes:
-      - ./config:/opt/zapret/config
+      - ./zapret_cdn_configs/cf:/opt/zapret/config
       - ./scripts/examples:/opt/zapret/init.d/custom.d.examples.linux
       - ./scripts/custom.d:/opt/zapret/init.d/sysv/custom.d
     healthcheck:
       test: [
         "CMD-SHELL",
-        "nc -z localhost ${SS_PORT} && nc -z localhost ${SOCKS_PORT} || exit 1"
+        "nc -z localhost ${SS_PORT_CF} && nc -z localhost ${SOCKS_PORT_CF} || exit 1"
+      ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 3s
+    cap_add:
+      - NET_ADMIN
+
+  ss-zapret-amazon:
+    image: vernette/ss-zapret:v72.8
+    container_name: zapret-proxy-amazon
+    restart: unless-stopped
+    environment:
+      - SS_PORT=${SS_PORT_AMAZON}
+      - SS_PASSWORD=${SS_PASSWORD}
+      - SS_ENCRYPT_METHOD=${SS_ENCRYPT_METHOD}
+      - SS_TIMEOUT=${SS_TIMEOUT}
+      - SOCKS_PORT=${SOCKS_PORT_AMAZON}
+      - SS_VERBOSE=1
+    ports:
+      - "127.0.0.1:${SS_PORT_AMAZON}:${SS_PORT_AMAZON}/tcp"
+      - "127.0.0.1:${SS_PORT_AMAZON}:${SS_PORT_AMAZON}/udp"
+      - "${SOCKS_PORT_AMAZON}:${SOCKS_PORT_AMAZON}/tcp"
+      - "${SOCKS_PORT_AMAZON}:${SOCKS_PORT_AMAZON}/udp"
+    volumes:
+      - ./zapret_cdn_configs/amazon:/opt/zapret/config
+      - ./scripts/examples:/opt/zapret/init.d/custom.d.examples.linux
+      - ./scripts/custom.d:/opt/zapret/init.d/sysv/custom.d
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "nc -z localhost ${SS_PORT_AMAZON} && nc -z localhost ${SOCKS_PORT_AMAZON} || exit 1"
+      ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 3s
+    cap_add:
+      - NET_ADMIN
+
+  ss-zapret-akamai:
+    image: vernette/ss-zapret:v72.8
+    container_name: zapret-proxy-akamai
+    restart: unless-stopped
+    environment:
+      - SS_PORT=${SS_PORT_AKAMAI}
+      - SS_PASSWORD=${SS_PASSWORD}
+      - SS_ENCRYPT_METHOD=${SS_ENCRYPT_METHOD}
+      - SS_TIMEOUT=${SS_TIMEOUT}
+      - SOCKS_PORT=${SOCKS_PORT_AKAMAI}
+      - SS_VERBOSE=1
+    ports:
+      - "127.0.0.1:${SS_PORT_AKAMAI}:${SS_PORT_AKAMAI}/tcp"
+      - "127.0.0.1:${SS_PORT_AKAMAI}:${SS_PORT_AKAMAI}/udp"
+      - "${SOCKS_PORT_AKAMAI}:${SOCKS_PORT_AKAMAI}/tcp"
+      - "${SOCKS_PORT_AKAMAI}:${SOCKS_PORT_AKAMAI}/udp"
+    volumes:
+      - ./zapret_cdn_configs/akamai:/opt/zapret/config
+      - ./scripts/examples:/opt/zapret/init.d/custom.d.examples.linux
+      - ./scripts/custom.d:/opt/zapret/init.d/sysv/custom.d
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "nc -z localhost ${SS_PORT_AKAMAI} && nc -z localhost ${SOCKS_PORT_AKAMAI} || exit 1"
+      ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 3s
+    cap_add:
+      - NET_ADMIN
+
+  ss-zapret-ovh:
+    image: vernette/ss-zapret:v72.8
+    container_name: zapret-proxy-ovh
+    restart: unless-stopped
+    environment:
+      - SS_PORT=${SS_PORT_OVH}
+      - SS_PASSWORD=${SS_PASSWORD}
+      - SS_ENCRYPT_METHOD=${SS_ENCRYPT_METHOD}
+      - SS_TIMEOUT=${SS_TIMEOUT}
+      - SOCKS_PORT=${SOCKS_PORT_OVH}
+      - SS_VERBOSE=1
+    ports:
+      - "127.0.0.1:${SS_PORT_OVH}:${SS_PORT_OVH}/tcp"
+      - "127.0.0.1:${SS_PORT_OVH}:${SS_PORT_OVH}/udp"
+      - "${SOCKS_PORT_OVH}:${SOCKS_PORT_OVH}/tcp"
+      - "${SOCKS_PORT_OVH}:${SOCKS_PORT_OVH}/udp"
+    volumes:
+      - ./zapret_cdn_configs/ovh:/opt/zapret/config
+      - ./scripts/examples:/opt/zapret/init.d/custom.d.examples.linux
+      - ./scripts/custom.d:/opt/zapret/init.d/sysv/custom.d
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "nc -z localhost ${SS_PORT_OVH} && nc -z localhost ${SOCKS_PORT_OVH} || exit 1"
+      ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 3s
+    cap_add:
+      - NET_ADMIN
+
+  ss-zapret-gcore:
+    image: vernette/ss-zapret:v72.8
+    container_name: zapret-proxy-gcore
+    restart: unless-stopped
+    environment:
+      - SS_PORT=${SS_PORT_GCORE}
+      - SS_PASSWORD=${SS_PASSWORD}
+      - SS_ENCRYPT_METHOD=${SS_ENCRYPT_METHOD}
+      - SS_TIMEOUT=${SS_TIMEOUT}
+      - SOCKS_PORT=${SOCKS_PORT_GCORE}
+      - SS_VERBOSE=1
+    ports:
+      - "127.0.0.1:${SS_PORT_GCORE}:${SS_PORT_GCORE}/tcp"
+      - "127.0.0.1:${SS_PORT_GCORE}:${SS_PORT_GCORE}/udp"
+      - "${SOCKS_PORT_GCORE}:${SOCKS_PORT_GCORE}/tcp"
+      - "${SOCKS_PORT_GCORE}:${SOCKS_PORT_GCORE}/udp"
+    volumes:
+      - ./zapret_cdn_configs/gcore:/opt/zapret/config
+      - ./scripts/examples:/opt/zapret/init.d/custom.d.examples.linux
+      - ./scripts/custom.d:/opt/zapret/init.d/sysv/custom.d
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "nc -z localhost ${SS_PORT_GCORE} && nc -z localhost ${SOCKS_PORT_GCORE} || exit 1"
+      ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 3s
+    cap_add:
+      - NET_ADMIN
+
+  ss-zapret-google:
+    image: vernette/ss-zapret:v72.8
+    container_name: zapret-proxy-google
+    restart: unless-stopped
+    environment:
+      - SS_PORT=${SS_PORT_GOOGLE}
+      - SS_PASSWORD=${SS_PASSWORD}
+      - SS_ENCRYPT_METHOD=${SS_ENCRYPT_METHOD}
+      - SS_TIMEOUT=${SS_TIMEOUT}
+      - SOCKS_PORT=${SOCKS_PORT_GOOGLE}
+      - SS_VERBOSE=1
+    ports:
+      - "127.0.0.1:${SS_PORT_GOOGLE}:${SS_PORT_GOOGLE}/tcp"
+      - "127.0.0.1:${SS_PORT_GOOGLE}:${SS_PORT_GOOGLE}/udp"
+      - "${SOCKS_PORT_GOOGLE}:${SOCKS_PORT_GOOGLE}/tcp"
+      - "${SOCKS_PORT_GOOGLE}:${SOCKS_PORT_GOOGLE}/udp"
+    volumes:
+      - ./zapret_cdn_configs/google:/opt/zapret/config
+      - ./scripts/examples:/opt/zapret/init.d/custom.d.examples.linux
+      - ./scripts/custom.d:/opt/zapret/init.d/sysv/custom.d
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "nc -z localhost ${SS_PORT_GOOGLE} && nc -z localhost ${SOCKS_PORT_GOOGLE} || exit 1"
       ]
       interval: 30s
       timeout: 10s
